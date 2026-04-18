@@ -8,6 +8,7 @@ import { LocalBusiness } from './entities/local-business.entity';
 import { User } from './entities/user.entity';
 import { LocalGuideModule } from './local-guide/local-guide.module';
 import { UploadModule } from './upload/upload.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UploadModule } from './upload/upload.module';
     BlogModule,
     LocalGuideModule,
     UploadModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
