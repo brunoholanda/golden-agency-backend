@@ -32,6 +32,22 @@ export class BlogService {
     }));
   }
 
+  async listHeadlinesPublic(limit = 2) {
+    const safeLimit = Math.min(Math.max(limit, 1), 10);
+    const rows = await this.repo.find({
+      where: { published: true },
+      order: { createdAt: 'DESC' },
+      take: safeLimit,
+      select: ['id', 'title', 'slug', 'createdAt'],
+    });
+    return rows.map((r) => ({
+      id: r.id,
+      title: r.title,
+      slug: r.slug,
+      createdAt: r.createdAt,
+    }));
+  }
+
   async getBySlugPublic(slug: string) {
     const post = await this.repo.findOne({ where: { slug, published: true } });
     if (!post) throw new NotFoundException('Post não encontrado');
