@@ -6,8 +6,12 @@ export class BlogPublicController {
   constructor(private readonly blog: BlogService) {}
 
   @Get()
-  list() {
-    return this.blog.listPublic();
+  list(@Query('page') page?: string, @Query('limit') limit?: string) {
+    const parsedPage = Number.parseInt(page ?? '', 10);
+    const parsedLimit = Number.parseInt(limit ?? '', 10);
+    const safePage = Number.isFinite(parsedPage) ? parsedPage : 1;
+    const safeLimit = Number.isFinite(parsedLimit) ? parsedLimit : 10;
+    return this.blog.listPublic(safePage, safeLimit);
   }
 
   @Get('headlines')

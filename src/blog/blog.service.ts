@@ -15,21 +15,34 @@ export class BlogService {
     return plain.length <= len ? plain : plain.slice(0, len) + '…';
   }
 
-  async listPublic() {
-    const rows = await this.repo.find({
+  async listPublic(page = 1, limit = 10) {
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(Math.max(limit, 1), 10);
+    const skip = (safePage - 1) * safeLimit;
+
+    const [rows, total] = await this.repo.findAndCount({
       where: { published: true },
       order: { createdAt: 'DESC' },
+      skip,
+      take: safeLimit,
       select: ['id', 'title', 'slug', 'body', 'imageUrl', 'tags', 'createdAt'],
     });
-    return rows.map((r) => ({
-      id: r.id,
-      title: r.title,
-      slug: r.slug,
-      excerpt: this.excerpt(r.body),
-      imageUrl: r.imageUrl,
-      tags: r.tags,
-      createdAt: r.createdAt,
-    }));
+
+    return {
+      items: rows.map((r) => ({
+        id: r.id,
+        title: r.title,
+        slug: r.slug,
+        excerpt: this.excerpt(r.body),
+        imageUrl: r.imageUrl,
+        tags: r.tags,
+        createdAt: r.createdAt,
+      })),
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.max(1, Math.ceil(total / safeLimit)),
+    };
   }
 
   async listHeadlinesPublic(limit = 2) {

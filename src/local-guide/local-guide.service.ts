@@ -15,15 +15,20 @@ export class LocalGuideService {
     @InjectRepository(LocalBusinessCategory) private readonly categoryRepo: Repository<LocalBusinessCategory>,
   ) {}
 
-  listPublic(category?: string) {
+  async listPublic(category?: string, page = 1, limit = 10) {
     const normalizedCategory = category?.trim();
     const where = normalizedCategory
       ? { published: true, category: normalizedCategory }
       : { published: true };
+    const safePage = Math.max(1, page);
+    const safeLimit = Math.min(Math.max(limit, 1), 10);
+    const skip = (safePage - 1) * safeLimit;
 
-    return this.repo.find({
+    const [rows, total] = await this.repo.findAndCount({
       where,
       order: { createdAt: 'DESC' },
+      skip,
+      take: safeLimit,
       select: [
         'id',
         'title',
@@ -40,6 +45,14 @@ export class LocalGuideService {
         'createdAt',
       ],
     });
+
+    return {
+      items: rows,
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.max(1, Math.ceil(total / safeLimit)),
+    };
   }
 
   async getPublic(id: string) {

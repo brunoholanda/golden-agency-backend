@@ -23,6 +23,9 @@ describe('API (e2e)', () => {
   });
 
   it('GET /api/v1/blog retorna lista', () => {
-    return request(app.getHttpServer()).get('/api/v1/blog').expect(200).expect([]);
+    return request(app.getHttpServer())
+      .get('/api/v1/blog')
+      .expect(200)
+      .expect({ items: [], total: 0, page: 1, limit: 10, totalPages: 1 });
   });
 });
