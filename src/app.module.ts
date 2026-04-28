@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { BlogModule } from './blog/blog.module';
 import { BlogPost } from './entities/blog-post.entity';
 import { LocalBusiness } from './entities/local-business.entity';
+import { LocalBusinessCategory } from './entities/local-business-category.entity';
 import { User } from './entities/user.entity';
 import { LocalGuideModule } from './local-guide/local-guide.module';
 import { UploadModule } from './upload/upload.module';
@@ -22,7 +23,7 @@ import { HealthModule } from './health/health.module';
         username: config.get<string>('DATABASE_USER', 'postgres'),
         password: config.get<string>('DATABASE_PASSWORD', ''),
         database: config.get<string>('DATABASE_NAME', 'gondeagencia'),
-        entities: [User, BlogPost, LocalBusiness],
+        entities: [User, BlogPost, LocalBusiness, LocalBusinessCategory],
         synchronize: config.get<string>('TYPEORM_SYNC', 'true') === 'true',
         logging: config.get<string>('TYPEORM_LOGGING') === 'true',
       }),
